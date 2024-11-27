@@ -6,10 +6,19 @@
 #'
 #' @export
 #' @importFrom rstudioapi getActiveDocumentContext getSourceEditorContext
+#' @importFrom knitr current_input
 #' @return character: path to current file, or empty string if indeterminate
 #' @examples
 #' script()
 script <- function() {
+  # qmd currently returns .rmarkdown
+  this <- knitr::current_input()
+  if(!(is.null(this))){
+    if(file.exists(this)){
+      this <- sub('\\.rmarkdown$','.qmd', this)
+      return(normalizePath(this))
+    }
+  }
   # http://stackoverflow.com/a/32016824/2292993
   cmdArgs = commandArgs(trailingOnly = FALSE)
   needle = "--file="
